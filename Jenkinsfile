@@ -15,17 +15,22 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build & Push Image') {
             steps {
-                sh 'docker build -t $FULL_IMAGE .'
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                        FULL_IMAGE="$DOCKER_USER/$IMAGE_NAME:$IMAGE_TAG"
+
+                        docker build -t $FULL_IMAGE .
+
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+
+                        docker push $FULL_IMAGE
+                    '''
+                }
             }
         }
 
-        stage('Push Docker Image') {
-            steps {
-                sh 'docker push $FULL_IMAGE'
-            }
-        }
 
         stage('Deploy to Kubernetes') {
             steps {
