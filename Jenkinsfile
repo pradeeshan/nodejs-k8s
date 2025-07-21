@@ -3,12 +3,25 @@ pipeline {
 
     environment {
         IMAGE_NAME = 'nodejs-app'
-        IMAGE_TAG = "${BUILD_NUMBER}"          // Use Jenkins build number as image tag
+        IMAGE_TAG = "${BUILD_NUMBER}"         // Use Jenkins build number as image tag
         REGISTRY = 'pradeeshan'
         FULL_IMAGE = "${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
     }
 
     stages {
+        stage('Notify Build Started') {
+            steps {
+                withCredentials([string(credentialsId: 'discord-webhook', variable: 'DISCORD_WEBHOOK')]) {
+                    sh '''
+                    curl -H "Content-Type: application/json" \
+                         -X POST \
+                         -d '{"content": "Build #'"$BUILD_NUMBER"' has started for Node.js app."}' \
+                         $DISCORD_WEBHOOK
+                    '''
+                }
+            }
+        }
+
         stage('Cleanup Workspace') {
             steps {
                 cleanWs()
@@ -53,7 +66,7 @@ pipeline {
                 sh '''
                 curl -H "Content-Type: application/json" \
                      -X POST \
-                     -d '{"content": "Jenkins Build #$BUILD_NUMBER succeeded for Node.js app."}' \
+                     -d '{"content": "Build #'"$BUILD_NUMBER"' succeeded for Node.js app."}' \
                      $DISCORD_WEBHOOK
                 '''
             }
@@ -64,7 +77,7 @@ pipeline {
                 sh '''
                 curl -H "Content-Type: application/json" \
                      -X POST \
-                     -d '{"content": "Jenkins Build #$BUILD_NUMBER FAILED for Node.js app."}' \
+                     -d '{"content": "Build #'"$BUILD_NUMBER"' failed for Node.js app."}' \
                      $DISCORD_WEBHOOK
                 '''
             }
