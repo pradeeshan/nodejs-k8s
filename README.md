@@ -14,30 +14,33 @@ kind create cluster --name nodejs-cluster --config kind-config.yaml
 
 #Navigate to project folder
 cd nodejs-app
+
 #Build Docker image
-docker build -t nodejs-app:latest .
+docker build -t nodejs-app:latest.
+
 #Tag Docker image
 docker tag nodejs-app:latest pradeeshan/nodejs-app:latest
+
 #Push Docker image
 docker push pradeeshan/nodejs-app:latest
 
 #Apply Deployment
 kubectl apply -f k8s/deployment.yaml
+
 #Apply Service
 kubectl apply -f k8s/service.yaml
+
 #Apply ingress
 kubectl apply -f k8s/ingress.yaml
 
 #Check pods
 kubectl get pods
+
 #Check services
 kubectl get svc
 
 #Use NodePort port to access
 http://localhost:30080
-
-
-
 
 Access using Nginx Ingress : 
 #Install Nginx Ingress Controller 
