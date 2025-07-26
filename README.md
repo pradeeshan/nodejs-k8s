@@ -10,27 +10,27 @@ K8s /
 -ingress.yaml
 
 #Create cluster
- kind create cluster --name nodejs-cluster --config kind-config.yaml
+kind create cluster --name nodejs-cluster --config kind-config.yaml
 
-# Navigate to project folder
+#Navigate to project folder
 cd nodejs-app
-# Build Docker image
+#Build Docker image
 docker build -t nodejs-app:latest .
 #Tag Docker image
 docker tag nodejs-app:latest pradeeshan/nodejs-app:latest
 #Push Docker image
 docker push pradeeshan/nodejs-app:latest
 
-# Apply Deployment
+#Apply Deployment
 kubectl apply -f k8s/deployment.yaml
-# Apply Service
+#Apply Service
 kubectl apply -f k8s/service.yaml
 #Apply ingress
 kubectl apply -f k8s/ingress.yaml
 
-# Check pods
+#Check pods
 kubectl get pods
-# Check services
+#Check services
 kubectl get svc
 
 #Use NodePort port to access
